@@ -47,7 +47,33 @@ A run prints what's currently open and sends one email per newly-opened day.
 Already-alerted dates are remembered in `seen_slots.json`; if a date closes
 again it'll re-alert if it reopens.
 
-## Schedule with cron
+## Schedule with GitHub Actions (no laptop required)
+
+A workflow at `.github/workflows/appointment-monitor.yml` runs this script
+every 15 minutes on GitHub's runners. Setup:
+
+1. Repo → Settings → Secrets and variables → Actions → **New repository secret**.
+   Add three secrets:
+   - `SMTP_USER` — your Gmail address
+   - `SMTP_PASS` — your 16-character Gmail App Password
+   - `TO_EMAIL` — `annie.liang94@gmail.com`
+2. Repo → Settings → Actions → General → **Workflow permissions** →
+   set to **Read and write permissions** (so the workflow can commit the
+   state file back).
+3. Repo → Actions tab → enable workflows if prompted.
+4. Trigger one manual run from the Actions tab using **Run workflow**
+   (tick the *dry_run* box the first time to verify the parser without
+   sending email).
+
+The workflow commits `seen_slots.json` back to the branch on each run so
+state survives between runs. Pick one of GitHub Actions or local cron —
+running both will fight over the state file.
+
+For private repos, every 15 minutes uses roughly 1500 of the 2000 free
+Actions minutes/month — bump the cron to `*/30` in the workflow if that's
+too tight.
+
+## Schedule with local cron
 
 Every 10 minutes (adjust to taste — don't hammer the site):
 
