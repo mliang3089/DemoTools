@@ -1,0 +1,6 @@
+.env
+seen_slots.json
+debug_html/
+__pycache__/
+*.pyc
+.venv/
